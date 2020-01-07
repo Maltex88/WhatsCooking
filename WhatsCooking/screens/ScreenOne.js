@@ -1,13 +1,11 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Button } from 'react-native';
 
 import ScreenName from '../components/ScreenName.js'
 import Header from '../components/Header.js'
+import firebase from 'firebase';
+
 export default class ScreenOne extends React.Component {
-
-  static navigationOptions = {
-
-  };
 
   render() {
     return (
@@ -15,6 +13,7 @@ export default class ScreenOne extends React.Component {
         <Header />
         <View style={styles.container}>
           <ScreenName name={'Screen one'} />
+          <Button title='sign out' onPress={() => firebase.auth().signOut()}/>
         </View>
       </React.Fragment>
     );
