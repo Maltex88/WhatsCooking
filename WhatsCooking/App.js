@@ -11,19 +11,35 @@ firebase.initializeApp(firebaseConfig);
 const initialState = {
   selectProtein:
   [
-    {key: '312312', type: 'Beef'},
-    {key: '645645', type: 'Chicken'},
-    {key: '867876', type: 'Fish'},
-    {key: '978987', type: 'Lamb'},
-    {key: '321455', type: 'Other'}
+    {key: '312312', type: 'Beef', isSelected: false, selectedClass: 'styles.list'},
+    {key: '645645', type: 'Chicken', isSelected: false, selectedClass: 'styles.list'},
+    {key: '867876', type: 'Fish', isSelected: false, selectedClass: 'styles.list'},
+    {key: '978987', type: 'Lamb', isSelected: false, selectedClass: 'styles.list'},
+    {key: '321455', type: 'Other', isSelected: false, selectedClass: 'styles.list'}
   ],
   fridgeIngredients: ['beef','Chicken','beef','beef', ],
   pantryIngredients: ['beef','beef','beef',],
   spices: ['beef','beef',],
   shoppingBasket: ['beef',],
 }
-const reducer = (state = initialState) => {
-  return state
+const reducer = (state = initialState, action) => {
+  switch (action.type)
+  {
+    // case 'TOGGEL_SELECT':
+    // console.log(state.selectProtein)
+    // return {
+    //  ...state,
+    //  selectProtein: state.selectProtein.map(
+    //    (selectedItem, i) => i === action.index ?
+    //     {
+    //       ...selectedItem,
+    //        isSelected: state.isSelected = !state.isSelected,
+    //       selectedClass: state.selectedClass = 'styles.selected'}
+    //                              : selectedItem
+    // )
+    // }
+  }
+    return state;
 }
 const store = createStore(reducer)
 
