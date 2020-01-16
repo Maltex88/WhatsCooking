@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import { View, StyleSheet, Button, Text, FlatList, TouchableOpacity, Image, TextInput } from 'react-native';
+import { View, StyleSheet, Button, Text, FlatList, TouchableOpacity, Image, TextInput, Keyboard } from 'react-native';
 import Constants from 'expo-constants';
 import ScreenName from '../components/ScreenName.js'
 import Header from '../components/Header.js'
@@ -15,10 +15,11 @@ let otherSearchOptions = '&sort=popularity'
 // ?apiKey=YOUR-API-KEY.
 
 
-function deleteItems() {
-  console.log('delete this..')
+const clearSearchField = (onChangeText) => {
+  onChangeText('')
+  Keyboard.dismiss()  
 }
-function Item({ title }) {
+const Item = ({ title }) => {
   return (
     <View style={styles.searchWordContainer}>
       <TouchableOpacity
@@ -29,8 +30,7 @@ function Item({ title }) {
     </View>
   );
 }
-
-function SearchForRecepies(selected, searchResult, setsearchResult) {
+const SearchForRecepies = (selected, searchResult, setsearchResult) => {
   if(selected.size === 0) {
     console.log('Are you sure you want to search without any searchoptions?')
   } else {
@@ -73,10 +73,10 @@ function SearchForRecepies(selected, searchResult, setsearchResult) {
 };
 
 const ScreenOne = (props) => {
-  console.log('when do i run?')
   const [selected, setSelected] = React.useState(new Map());
   const [searchResult, setsearchResult] = React.useState([]);
   const [value, onChangeText] = React.useState('');
+
   const onSelect = React.useCallback(
     title => {
       const newSelected = new Map(selected);
@@ -92,32 +92,32 @@ const ScreenOne = (props) => {
           <Header />
         </View>
           <View style={styles.QuicksearchContainer}>
-            <Text style={{justifyContent: 'center', alignSelf: 'center'}}>Add Ingredients to list</Text>
+            <Text style={{justifyContent: 'center', alignSelf: 'center', margin: 10}}>Add Ingredients to your search options</Text>
             <View style={{flexDirection: 'row'}}>
               <TextInput
-                style={{ marginLeft: 15,borderColor: 'gray', borderWidth: 1, width: 130 }}
+                style={{ marginLeft: 45,borderColor: 'gray', borderWidth: 1, width: 130 }}
                 onChangeText={text => onChangeText(text)}
                 value={value}
                 minLength={40}
               />
-              <Button title="+" style={{height: 10}} onPress={() => props.addItem(value)} />
+            <Button title="+" style={{height: 10}} onPress={() => props.addItem(value, clearSearchField(onChangeText) )} />
             </View>
           </View>
 
 
           <View style={styles.searchResultsContainer}>
           <FlatList
-          data={searchResult}
-          renderItem={({ item }) =>
-          <View><Text>{item.title}</Text></View>}
-          keyExtractor={item => item.id.toString()}
+            data={searchResult}
+            renderItem={({ item }) =>
+            <View><Text>{item.title}</Text></View>}
+            keyExtractor={item => item.id.toString()}
           />
           </View>
 
           <TouchableOpacity
-          onPress={() => SearchForRecepies(selected, searchResult, setsearchResult)}
-          style={{backgroundColor: '#108792', padding: 10}}>
-          <Text style={{color: 'white', fontSize: 15}}>Search</Text>
+            onPress={() => SearchForRecepies(selected, searchResult, setsearchResult)}
+            style={{backgroundColor: '#108792', padding: 10}}>
+            <Text style={{color: 'white', fontSize: 15}}>Search</Text>
           </TouchableOpacity>
         <View style={styles.searchWordContainer}>
           <FlatList
