@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
-import { View, StyleSheet, Button, Text, FlatList, TouchableOpacity, Image, TextInput, Keyboard } from 'react-native';
+import { View, StyleSheet, Button, Text, FlatList, TouchableOpacity, ImageBackground, TextInput, Keyboard } from 'react-native';
+import { Searchbar } from 'react-native-paper';
 import Constants from 'expo-constants';
 import ScreenName from '../components/ScreenName.js'
 import Header from '../components/Header.js'
@@ -17,7 +18,7 @@ let otherSearchOptions = '&sort=popularity'
 
 const clearSearchField = (onChangeText) => {
   onChangeText('')
-  Keyboard.dismiss()  
+  Keyboard.dismiss()
 }
 const Item = ({ title }) => {
   return (
@@ -31,6 +32,7 @@ const Item = ({ title }) => {
   );
 }
 const SearchForRecepies = (selected, searchResult, setsearchResult) => {
+  console.log('yess')
   if(selected.size === 0) {
     console.log('Are you sure you want to search without any searchoptions?')
   } else {
@@ -72,6 +74,31 @@ const SearchForRecepies = (selected, searchResult, setsearchResult) => {
   console.log(selected.get('Other'))
 };
 
+const QuickSearch = (value, setsearchResult, searchResult) => {
+
+  fetch(`https://api.spoonacular.com/recipes/random?apiKey=2b04a71c0d6443a4b1de041bbb0574a6&number=2&tags=main+course`, {
+    method: 'GET',
+    headers: {
+      'Accept': 'Application/json',
+      'Content-type': 'Application/json',
+      "Authorization": '2b04a71c0d6443a4b1de041bbb0574a6'
+    },
+  })
+  .then(response => response.json())
+  .then(responseJson => {
+    console.log('startstartstartstartstartstartstartstartstartstartstart')
+    console.log(responseJson.recipes)
+    setsearchResult([
+      ...searchResult,
+      ...responseJson.recipes
+    ]);
+    // console.log(searchResult)
+  })
+  .catch(error => {
+    console.error(error);
+  });
+}
+
 const ScreenOne = (props) => {
   const [selected, setSelected] = React.useState(new Map());
   const [searchResult, setsearchResult] = React.useState([]);
@@ -88,58 +115,43 @@ const ScreenOne = (props) => {
 
     return (
       <View style={styles.MainContainer}>
-        <View style={{flex: 0.2}}>
           <Header />
-        </View>
-          <View style={styles.QuicksearchContainer}>
-            <Text style={{justifyContent: 'center', alignSelf: 'center', margin: 10}}>Add Ingredients to your search options</Text>
-            <View style={{flexDirection: 'row'}}>
-              <TextInput
-                style={{ marginLeft: 45,borderColor: 'gray', borderWidth: 1, width: 130 }}
+
+          <ImageBackground style={styles.QuicksearchContainer} source={require('../assets/cook-366875_640.jpg')}>
+
+            <View style={{}}>
+
+              <Searchbar
+                style={{ width: '80%', backgroundColor: 'white', justifyContent: 'center', alignSelf: 'center', top: '10%', }}
+                placeholder="Search favorit recepies"
                 onChangeText={text => onChangeText(text)}
                 value={value}
-                minLength={40}
+                onIconPress={() => QuickSearch(value, setsearchResult, searchResult)}
+                onSubmitEditing={()=> QuickSearch(value, setsearchResult, searchResult)}
               />
-            <Button title="+" style={{height: 10}} onPress={() => props.addItem(value, clearSearchField(onChangeText) )} />
             </View>
-          </View>
+          </ImageBackground>
+
 
 
           <View style={styles.searchResultsContainer}>
-          <FlatList
-            data={searchResult}
-            renderItem={({ item }) =>
-            <View><Text>{item.title}</Text></View>}
-            keyExtractor={item => item.id.toString()}
-          />
-          </View>
-
-          <TouchableOpacity
-            onPress={() => SearchForRecepies(selected, searchResult, setsearchResult)}
-            style={{backgroundColor: '#108792', padding: 10}}>
-            <Text style={{color: 'white', fontSize: 15}}>Search</Text>
-          </TouchableOpacity>
-        <View style={styles.searchWordContainer}>
-          <FlatList
-          numColumns={5}
-          contentContainerStyle={{flexGrow: 1, justifyContent: 'flex-end', marginBottom: 10,}}
-          data={props.userIngredients}
-          renderItem={({ item }) => (
-            <Item
-            title={item.type}
-            selected={!!selected.get(item.type)}
-            onSelect={onSelect}
+            <FlatList
+              data={searchResult}
+              renderItem={({ item }) =>
+                <View style={{borderColor: 'black', borderWidth: 2, padding: 15, margin: 15,}}>
+                  <Text>{item.title}</Text>
+                </View>}
+              keyExtractor={item => item.id.toString()}
             />
-          )}
-          keyExtractor={item => item.key}
-          extraData={selected}
-          />
-
           </View>
+
+        <View style={styles.searchWordContainer}>
+
+        </View>
 
         <View style={styles.container}>
 
-          <Button title='sign out' onPress={() => firebase.auth().signOut()}/>
+
         </View>
       </View>
     );
@@ -152,7 +164,6 @@ function mapStateToProps(state) {
   }
 }
 function mapDispatchToProps(dispatch) {
-  console.log('add chicken to dispatch, sending it to action')
   return {
     addItem: (value) => dispatch({type: 'ADDITEM', value })
   }
@@ -165,10 +176,8 @@ const styles = StyleSheet.create({
     flex: 1
   },
   QuicksearchContainer: {
-    flex: 0.2,
-    margin: 15,
-    borderWidth: 2,
-    borderColor: 'black',
+    flex: 0.35,
+
   },
   searchWordContainer: {
     flexDirection: 'row'
@@ -182,10 +191,59 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   searchResultsContainer: {
-
+    flex: 0.4
   }
 });
 
+  /*
+<Button title='sign out' onPress={() => firebase.auth().signOut()}/>
+  */
+  /*
+  <View style={styles.searchWordContainer}>
+    <FlatList
+    numColumns={5}
+    contentContainerStyle={{flexGrow: 1, justifyContent: 'flex-end', marginBottom: 10,}}
+    data={props.userIngredients}
+    renderItem={({ item }) => (
+      <Item
+      title={item.type}
+      selected={!!selected.get(item.type)}
+      onSelect={onSelect}
+      />
+    )}
+    keyExtractor={item => item.key}
+    extraData={selected}
+    />
+  </View>*/
+    /*
+    <View style={styles.searchResultsContainer}>
+      <FlatList
+        data={searchResult}
+        renderItem={({ item }) =>
+        <View><Text>{item.title}</Text></View>}
+        keyExtractor={item => item.id.toString()}
+      />
+      <TouchableOpacity
+      onPress={() => SearchForRecepies(selected, searchResult, setsearchResult)}
+      style={{backgroundColor: '#108792', padding: 10}}>
+      <Text style={{color: 'white', fontSize: 15}}>Search</Text>
+      </TouchableOpacity>
+    </View>
+    */
+
+   /*
+   Adding items to list, use for add ingredients and spices
+   <View style={{flexDirection: 'row'}}>
+     <TextInput
+     style={{ marginLeft: 15,borderColor: 'white', borderWidth: 1, width: 130, backgroundColor: 'white' }}
+     onChangeText={text => onChangeText(text)}
+     value={value}
+     minLength={40}
+     />
+     <Button title="+" style={{height: 10}} onPress={() => props.addItem(value, clearSearchField(onChangeText) )} />
+   </View>
+
+   */
 
     /*
     how to select items..

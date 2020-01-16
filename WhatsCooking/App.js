@@ -1,4 +1,5 @@
-import React from 'react';
+import  React, { useEffect } from 'react';
+import * as Font from 'expo-font';
 import firebase from 'firebase';
 import {createStore }from 'redux';
 import { Provider } from 'react-redux';
@@ -34,6 +35,11 @@ const store = createStore(reducer)
 
 
 export default function App() {
+  useEffect(() => {
+    Font.loadAsync({
+      'Pacifico-Regular': require('./assets/fonts/Pacifico-Regular.ttf'),
+    });
+  });
   return (
     <Provider store={store}>
       <AppNavigator />
