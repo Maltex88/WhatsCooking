@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import { View, StyleSheet, Button, Text, FlatList, TouchableOpacity, ImageBackground, TextInput, Keyboard } from 'react-native';
+import { View, StyleSheet, Button, Text, FlatList, TouchableOpacity, ImageBackground, TextInput, Keyboard, Image } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import Constants from 'expo-constants';
 import ScreenName from '../components/ScreenName.js'
@@ -74,9 +74,9 @@ const SearchForRecepies = (selected, searchResult, setsearchResult) => {
   console.log(selected.get('Other'))
 };
 
-const QuickSearch = (value, setsearchResult, searchResult) => {
-
-  fetch(`https://api.spoonacular.com/recipes/random?apiKey=2b04a71c0d6443a4b1de041bbb0574a6&number=2&tags=main+course`, {
+const QuickSearch = (recepieString, setsearchResult, searchResult) => {
+  console.log(recepieString)
+  fetch(`https://api.spoonacular.com/recipes/search?apiKey=2b04a71c0d6443a4b1de041bbb0574a6&query=${recepieString}&number=10`, {
     method: 'GET',
     headers: {
       'Accept': 'Application/json',
@@ -87,12 +87,12 @@ const QuickSearch = (value, setsearchResult, searchResult) => {
   .then(response => response.json())
   .then(responseJson => {
     console.log('startstartstartstartstartstartstartstartstartstartstart')
-    console.log(responseJson.recipes)
+    console.log(responseJson)
     setsearchResult([
       ...searchResult,
-      ...responseJson.recipes
+      ...responseJson.results
     ]);
-    // console.log(searchResult)
+    console.log(searchResult)
   })
   .catch(error => {
     console.error(error);
@@ -102,7 +102,7 @@ const QuickSearch = (value, setsearchResult, searchResult) => {
 const ScreenOne = (props) => {
   const [selected, setSelected] = React.useState(new Map());
   const [searchResult, setsearchResult] = React.useState([]);
-  const [value, onChangeText] = React.useState('');
+  const [recepieString, onChangeText] = React.useState('');
 
   const onSelect = React.useCallback(
     title => {
@@ -123,11 +123,11 @@ const ScreenOne = (props) => {
 
               <Searchbar
                 style={{ width: '80%', backgroundColor: 'white', justifyContent: 'center', alignSelf: 'center', top: '10%', }}
-                placeholder="Search favorit recepies"
+                placeholder="Search for recepies"
                 onChangeText={text => onChangeText(text)}
-                value={value}
-                onIconPress={() => QuickSearch(value, setsearchResult, searchResult)}
-                onSubmitEditing={()=> QuickSearch(value, setsearchResult, searchResult)}
+                value={recepieString}
+                onIconPress={() => QuickSearch(recepieString, setsearchResult, searchResult, clearSearchField(onChangeText))}
+                onSubmitEditing={()=> QuickSearch(recepieString, setsearchResult, searchResult, clearSearchField(onChangeText))}
               />
             </View>
           </ImageBackground>
@@ -138,8 +138,21 @@ const ScreenOne = (props) => {
             <FlatList
               data={searchResult}
               renderItem={({ item }) =>
-                <View style={{borderColor: 'black', borderWidth: 2, padding: 15, margin: 15,}}>
-                  <Text>{item.title}</Text>
+                <View style={{ marginVertical: 15 }}>
+                  <View style={{justifyContent: 'center', alignSelf: 'center', width: '90%', borderRadius: 10}}>
+                    <ImageBackground style={{height: 250, width: '100%' }}  source={{uri: `https://spoonacular.com/recipeImages/${item.image}`}} imageStyle={{ borderRadius: 25 }}>
+                      <Text style={{backgroundColor: 'green', width: '20%', top: 15, justifyContent: 'center' }}>show icon to addto favorit</Text>
+                      </ImageBackground>
+
+                  </View>
+
+                    <Text style={{marginTop: 5, left: '5%'}}>{item.title}</Text>
+                    <View style={{flexDirection: 'row',  left: '5%'}}>
+                      <Text style={{marginTop: 5, alignSelf: 'center'}}>Prep Time: {item.readyInMinutes} min</Text>
+                      <TouchableOpacity style={styles.showInstructionsButton}>
+                        <Text style={{color: 'white'}}>Show me the instructions!</Text>
+                      </TouchableOpacity>
+                    </View>
                 </View>}
               keyExtractor={item => item.id.toString()}
             />
@@ -177,7 +190,6 @@ const styles = StyleSheet.create({
   },
   QuicksearchContainer: {
     flex: 0.35,
-
   },
   searchWordContainer: {
     flexDirection: 'row'
@@ -191,7 +203,14 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   searchResultsContainer: {
-    flex: 0.4
+    flex: 0.70
+  },
+  showInstructionsButton: {
+    backgroundColor: '#108792',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    margin: 5,
+    padding: 10
   }
 });
 
