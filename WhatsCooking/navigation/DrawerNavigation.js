@@ -7,14 +7,14 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 
 import Header from '../components/Header'
-import ScreenOne from '../screens/ScreenOne';
+import HomeScreen from '../screens/HomeScreen';
 import ScreenTwo from '../screens/ScreenTwo';
 import ScreenThree from '../screens/ScreenThree';
 
 import RecepieDetailsScreen from '../screens/RecepieDetails';
 
 const HomeAndDetailStack = createStackNavigator({
-  ScreenOne: {screen: ScreenOne},
+  HomeScreen: {screen: HomeScreen},
   ScreenTwo: {screen: RecepieDetailsScreen}
 },{
   defaultNavigationOptions: ({ navigation }) => {
