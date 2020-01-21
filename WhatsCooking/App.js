@@ -10,10 +10,7 @@ import AppNavigator from './navigation/AppNavigator'
 firebase.initializeApp(firebaseConfig);
 
 const initialState = {
-  selectProtein:
-  [
-
-  ],
+  selectProtein: [],
   fridgeIngredients: ['beef','Chicken','beef','beef', ],
   pantryIngredients: ['beef','beef','beef',],
   spices: ['beef','beef',],

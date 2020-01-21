@@ -6,16 +6,15 @@ import Header from '../components/Header.js'
 
 export default class ScreenTwo extends React.Component {
 
-  static navigationOptions = {
 
-  };
 
   render() {
     return (
       <React.Fragment>
-        <Header />
+
         <View style={styles.container}>
           <ScreenName name={'Screen Two'} />
+          
         </View>
       </React.Fragment>
     );

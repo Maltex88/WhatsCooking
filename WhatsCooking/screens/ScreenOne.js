@@ -2,8 +2,7 @@ import React, {useEffect} from 'react';
 import { View, StyleSheet, Button, Text, FlatList, TouchableOpacity, ImageBackground, TextInput, Keyboard, Image } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import Constants from 'expo-constants';
-import ScreenName from '../components/ScreenName.js'
-import Header from '../components/Header.js'
+
 import firebase from 'firebase';
 import {connect} from 'react-redux';
 
@@ -115,7 +114,7 @@ const ScreenOne = (props) => {
 
     return (
       <View style={styles.MainContainer}>
-          <Header />
+
 
           <ImageBackground style={styles.QuicksearchContainer} source={require('../assets/cook-366875_640.jpg')}>
 
@@ -149,7 +148,7 @@ const ScreenOne = (props) => {
                     <Text style={{marginTop: 5, left: '5%'}}>{item.title}</Text>
                     <View style={{flexDirection: 'row',  left: '5%'}}>
                       <Text style={{marginTop: 5, alignSelf: 'center'}}>Prep Time: {item.readyInMinutes} min</Text>
-                      <TouchableOpacity style={styles.showInstructionsButton}>
+                      <TouchableOpacity style={styles.showInstructionsButton} onPress={() => props.navigation.navigate('ScreenTwo', {itemId: item.id, itemImg: item.image, total: item}) } >
                         <Text style={{color: 'white'}}>Show me the instructions!</Text>
                       </TouchableOpacity>
                     </View>
@@ -163,7 +162,7 @@ const ScreenOne = (props) => {
         </View>
 
         <View style={styles.container}>
-
+          <Button title='sign out' onPress={() => firebase.auth().signOut()}/>
 
         </View>
       </View>
@@ -203,7 +202,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   searchResultsContainer: {
-    flex: 0.70
+    flex: 0.60
   },
   showInstructionsButton: {
     backgroundColor: '#108792',
@@ -211,6 +210,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     margin: 5,
     padding: 10
+  },
+  container: {
+    flex: 0.1,
   }
 });
 

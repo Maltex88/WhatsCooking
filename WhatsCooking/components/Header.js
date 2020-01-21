@@ -20,9 +20,7 @@ class Header extends React.Component {
 
 const styles = StyleSheet.create({
   header: {
-    padding: 10,
-    flexDirection: 'row',
-    paddingTop: 35,
+    width: '100%',
     backgroundColor: '#108792',
     alignItems: 'center'
   },
