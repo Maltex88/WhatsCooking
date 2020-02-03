@@ -6,13 +6,14 @@ import {
   View,
   Text,
   StyleSheet,
+  Button,
 } from 'react-native';
-
+import firebase from 'firebase';
 const ScreenThree = (props) => (
   <View style={styles.container}>
 
   <View style={{flex: 1,justifyContent: 'center', alignSelf: 'center'}}>
-    <Text>Yess</Text>
+    <Button title='sign out' onPress={() => firebase.auth().signOut()}/>
   </View>
   </View>
 );

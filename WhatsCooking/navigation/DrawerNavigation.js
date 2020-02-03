@@ -8,9 +8,11 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 
 import Header from '../components/Header'
 import HomeScreen from '../screens/HomeScreen';
-import ScreenTwo from '../screens/ScreenTwo';
+import Virtuelpantry from '../screens/VirtualPantry/VirtualPantry';
 import ScreenThree from '../screens/ScreenThree';
 
+import SpiceRack from '../screens/VirtualPantry/SpiceRack';
+import Pantry from '../screens/VirtualPantry/Pantry';
 import RecepieDetailsScreen from '../screens/RecepieDetails';
 
 const HomeAndDetailStack = createStackNavigator({
@@ -24,11 +26,24 @@ const HomeAndDetailStack = createStackNavigator({
   }
 })
 
+const PantryStack = createStackNavigator({
+  MainPantry: {screen: Virtuelpantry},
+  SpiceRack: {screen: SpiceRack},
+  Pantry: {screen: Pantry}
+},{
+  defaultNavigationOptions: ({ navigation }) => {
+    return {
+      headerShown: false,
+    };
+  }
+})
+
 
 const DashboardTabNavigator = createBottomTabNavigator({
-  HomeAndDetailStack,
-  ScreenTwo,
-  ScreenThree
+  Home: {screen: HomeAndDetailStack},
+  Pantry: {screen: PantryStack},
+  Options: {screen: ScreenThree}
+
 },{
   navigationOptions: ({ navigation }) => {
       const { routeName } = navigation.state.routes[navigation.state.index];

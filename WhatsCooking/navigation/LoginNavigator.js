@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import * as Google from 'expo-google-app-auth';
 import firebase from 'firebase';
+import {connect} from 'react-redux';
 import { View, Text, StyleSheet, Button } from 'react-native';
 
 const LoginNavigator = (props) => {
@@ -21,7 +22,6 @@ const LoginNavigator = (props) => {
     return false;
   };
   onSignIn = googleUser => {
-    console.log('Google Auth Response', googleUser);
     // We need to register an Observer on Firebase Auth to make sure auth is initialized.
     var unsubscribe = firebase.auth().onAuthStateChanged(
       function(firebaseUser) {
@@ -38,7 +38,7 @@ const LoginNavigator = (props) => {
             .auth()
             .signInWithCredential(credential)
             .then(function(result) {
-              console.log('user signed in ');
+              props.setUser(result.user.uid)
               if (result.additionalUserInfo.isNewUser) {
                 firebase
                   .database()
@@ -99,16 +99,21 @@ const LoginNavigator = (props) => {
       <View style={styles.container}>
         <Button
           title='Sign in with google'
-          onPress={() => signInWithGoogleAsync()}
+          onPress={() => signInWithGoogleAsync() }
           />
       </View>
 
     )
 }
 
+function mapDispatchToProps(dispatch) {
+  return {
+    setUser: (value) => dispatch({type: 'SETUSERID', value })
+  }
+}
 
-export default LoginNavigator;
 
+export default connect(null, mapDispatchToProps)(LoginNavigator);
 const styles = StyleSheet.create({
   container: {
     flex: 1,

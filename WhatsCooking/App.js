@@ -10,23 +10,29 @@ import AppNavigator from './navigation/AppNavigator'
 firebase.initializeApp(firebaseConfig);
 
 const initialState = {
-  selectProtein: [],
+  userId: '',
   fridgeIngredients: ['beef','Chicken','beef','beef', ],
   pantryIngredients: ['beef','beef','beef',],
   spices: ['beef','beef',],
   shoppingBasket: ['beef',],
 }
 const reducer = (state = initialState, action) => {
+
   switch (action.type)
   {
-    case 'ADDITEM':
-    console.log('chicken is added to state..')
+    // case 'ADDITEM':
+    // console.log('chicken is added to state..')
+    // return {
+    //   ...state,
+    //   selectProtein: [...state.selectProtein, {key: 'hej', type: action.value, isSelected: true, selectedClass: 'styles.selected'}],
+    // }
+    case 'SETUSERID':
     return {
       ...state,
-      selectProtein: [...state.selectProtein, {key: 'hej', type: action.value, isSelected: true, selectedClass: 'styles.selected'}],
+      userId: action.value
     }
   }
-    return state;
+  return state;
 }
 const store = createStore(reducer)
 

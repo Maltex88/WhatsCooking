@@ -1,5 +1,3 @@
-/* @flow weak */
-
 import React, { useEffect } from 'react';
 import {
   View,
@@ -8,7 +6,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import firebase from 'firebase';
-
+import {connect} from 'react-redux';
 
 const LoadingScreen = (props) => {
   useEffect(() => {
@@ -19,6 +17,7 @@ const LoadingScreen = (props) => {
     {
       if(user)
       {
+        props.setUser(user.uid)
         props.navigation.navigate('Main')
       }
       else {
@@ -33,9 +32,12 @@ const LoadingScreen = (props) => {
   )
 };
 
-
-
-export default LoadingScreen;
+function mapDispatchToProps(dispatch) {
+  return {
+    setUser: (value) => dispatch({type: 'SETUSERID', value })
+  }
+}
+export default connect(null, mapDispatchToProps)(LoadingScreen);
 
 const styles = StyleSheet.create({
   container: {
