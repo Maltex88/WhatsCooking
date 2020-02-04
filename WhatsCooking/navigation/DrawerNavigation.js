@@ -46,7 +46,7 @@ const DashboardTabNavigator = createBottomTabNavigator({
 
 },{
   navigationOptions: ({ navigation }) => {
-      const { routeName } = navigation.state.routes[navigation.state.index];
+      //const { routeName } = navigation.state.routes[navigation.state.index];
       return {
         // headerShown: false,
         headerTitle: () => <Text style={{fontFamily: 'Pacifico-Regular', fontSize: 20, color: 'white',}}>Whats For Dinner?</Text>

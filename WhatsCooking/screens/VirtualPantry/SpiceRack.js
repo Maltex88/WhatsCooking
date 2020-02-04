@@ -12,7 +12,7 @@ import {
 import { Searchbar } from 'react-native-paper';
 import firebase from 'firebase';
 import * as Google from 'expo-google-app-auth';
-let spicesData = []
+
 
 const SpiceRack = (props) => {
   const [loading, setLoading] = React.useState(true);
@@ -26,6 +26,7 @@ const SpiceRack = (props) => {
 
 
   const SpiceListener = () => {
+    console.log('running more then once?')
     firebase.database().ref('users/' + userId + '/spices')
       .on('value', function(snapshot) {
         setSpiceData(...spicesData, snapshot.val());
@@ -49,46 +50,63 @@ const SpiceRack = (props) => {
       }
     );
   };
-  const FilterSpices = (text) => {
 
-
-
-
-    if(!text) {
-      console.log('jag triggas: oldObj ska vara hela listan', filterdSpices)
-      setSpiceData({...filterdSpices});
-    } else {
-      for (var key in spicesData) {
+  const filterText = ( text) => {
+    let kaos = {...filterdSpices}
+      for (var key in kaos) {
         let id = key;
         // skip loop if the property is from prototype
-        if (!spicesData.hasOwnProperty(key)) continue;
+        if (!kaos.hasOwnProperty(key)) continue;
 
-        var obj = spicesData[key];
+        var obj = kaos[key];
         for (var prop in obj) {
           // skip loop if the property is from prototype
           if (!obj.hasOwnProperty(prop)) continue;
 
           if(obj[prop].substring(0, text.length) === text.substring(0, text.length)) {
-            console.log('first letter is ok, check rest.., word: ', obj[prop].substring(0, text.length))
-            console.log(text.substring(0, text.length))
+
           } else {
-            delete spicesData[`${id}`]
+            delete kaos[`${id}`]
           }
-          // your code
-          //obj[prop]
         }
+    }
+    setSpiceData({...spicesData, ...kaos});
+  }
+  const filterDeletedText = (text) => {
 
+    let newObj = {...filterdSpices}
+    for (var key in newObj) {
+      let id = key;
+      // skip loop if the property is from prototype
+      if (!newObj.hasOwnProperty(key)) continue;
+
+      var obj = newObj[key];
+      for (var prop in obj) {
+        // skip loop if the property is from prototype
+        if (!obj.hasOwnProperty(prop)) continue;
+
+        if(obj[prop].substring(0, text.length) === text.substring(0, text.length)) {
+
+        } else {
+          delete newObj[`${id}`]
+        }
       }
-      console.log('efter loopen är newObj: ', filterdSpices)
-      console.log('efter loopen är spicedata: ', spicesData)
-      console.log('sätter data till newobj')
-      setSpiceData({...spicesData});
+  }
+      setSpiceData({...spicesData, ...newObj});
+  }
 
+  const FilterSpices = (text, backspace) => {
+    if(!text) {
+      setSpiceData({...filterdSpices});
+    } else {
+      if(backspace) {
+        filterDeletedText(text)
+      } else {
+        filterText( text)
+      }
     }
+  }
 
-
-
-    }
   useEffect(() => {
     SpiceListener();
   },[])
@@ -103,6 +121,11 @@ const SpiceRack = (props) => {
           placeholder="Add Spices"
           onChangeText={text => onChangeText(text)}
           value={recepieString}
+          onKeyPress={({ nativeEvent }) => {
+            if (nativeEvent.key === 'Backspace') {
+              onChangeText(text, nativeEvent)
+            }
+          }}
           onIconPress={() => AddSpicesToDb(recepieString, ClearSearchField())}
           onSubmitEditing={()=> AddSpicesToDb(recepieString, ClearSearchField())}
         />
@@ -115,6 +138,11 @@ const SpiceRack = (props) => {
               style={{ width: '80%', backgroundColor: 'white', justifyContent: 'center', alignSelf: 'center',  }}
               placeholder="Search your spicerack"
               onChangeText={text => FilterSpices(text, setFilter(text))}
+              onKeyPress={({ nativeEvent }) => {
+                if (nativeEvent.key === 'Backspace') {
+                  FilterSpices(filter, nativeEvent.key)
+                }
+              }}
               value={filter}
               onIconPress={() => QuickSearch(ClearSearchField())}
               onSubmitEditing={()=> QuickSearch(ClearSearchField())}
